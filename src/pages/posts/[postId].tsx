@@ -1,5 +1,4 @@
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
-import { useRouter } from "next/router";
 
 interface IPost {
   id: number;
@@ -8,10 +7,6 @@ interface IPost {
 }
 
 function Post(props: { post: IPost }) {
-  const router = useRouter();
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
   return (
     <div>
       <p>{props.post.id}</p>
@@ -33,7 +28,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       params: { postId: `${post.id}` },
     };
   });
-  return { paths, fallback: true };
+  return { paths, fallback: "blocking" };
 };
 
 export const getStaticProps: GetStaticProps<{ post: IPost }> = async (
