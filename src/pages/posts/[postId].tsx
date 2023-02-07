@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
+import { useRouter } from "next/router";
 
 interface IPost {
   id: number;
@@ -7,6 +8,10 @@ interface IPost {
 }
 
 function Post(props: { post: IPost }) {
+  const router = useRouter();
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
   return (
     <div>
       <p>{props.post.id}</p>
@@ -18,15 +23,17 @@ function Post(props: { post: IPost }) {
 
 export default Post;
 
-export const getStaticPaths: GetStaticPaths = () => {
-  return {
-    paths: [
-      { params: { postId: "1" } },
-      { params: { postId: "2" } },
-      { params: { postId: "3" } },
-    ],
-    fallback: false,
-  };
+export const getStaticPaths: GetStaticPaths = async () => {
+  const res = await fetch("https://jsonplaceholder.typicode.com/posts", {
+    method: "GET",
+  });
+  const posts: IPost[] = await res.json();
+  const paths = posts.slice(0, 3).map((post) => {
+    return {
+      params: { postId: `${post.id}` },
+    };
+  });
+  return { paths, fallback: true };
 };
 
 export const getStaticProps: GetStaticProps<{ post: IPost }> = async (
@@ -40,6 +47,7 @@ export const getStaticProps: GetStaticProps<{ post: IPost }> = async (
     }
   );
   const post: IPost = await res.json();
+  if (!post.id) return { notFound: true }; // 404
   return {
     props: { post },
   };
