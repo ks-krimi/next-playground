@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 
 interface IDashboardData {
   posts: number;
@@ -7,21 +7,19 @@ interface IDashboardData {
   following: number;
 }
 
+const fetcher = async function fetchData(): Promise<IDashboardData> {
+  const response = await fetch("http://localhost:4000/dashboard", {
+    method: "GET",
+  });
+  const data: IDashboardData = await response.json();
+  return data;
+};
+
 function Dashboard() {
-  const [data, setData] = useState<IDashboardData | null>(null);
+  const { data, error, isLoading } = useSWR("/dashboard", fetcher);
 
-  useEffect(() => {
-    async function fetchData(): Promise<void> {
-      const response = await fetch("http://localhost:4000/dashboard", {
-        method: "GET",
-      });
-      const data: IDashboardData = await response.json();
-      setData(data);
-    }
-    fetchData();
-  }, []);
-
-  if (!data) return <div>Loading...</div>;
+  if (error) return <div>An error occured</div>;
+  if (isLoading || !data) return <div>Loading...</div>;
 
   return (
     <div>
