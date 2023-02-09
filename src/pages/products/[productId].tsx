@@ -41,5 +41,6 @@ export const getStaticProps: GetStaticProps<{
     props: {
       product,
     },
+    revalidate: 10,
   };
 };
