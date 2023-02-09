@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
+import { useRouter } from "next/router";
 
 interface IProduct {
   id: number;
@@ -8,6 +9,8 @@ interface IProduct {
 }
 
 function Product({ product }: { product: IProduct }) {
+  const router = useRouter();
+  if (router.isFallback) return <p>Loading...</p>;
   return (
     <div>
       <p>{product.id}</p>
@@ -26,7 +29,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths = products.map((product) => {
     return { params: { productId: `${product.id}` } };
   });
-  return { paths, fallback: false };
+  return { paths, fallback: true };
 };
 
 export const getStaticProps: GetStaticProps<{
@@ -37,10 +40,9 @@ export const getStaticProps: GetStaticProps<{
     `http://localhost:4000/products/${params?.productId}`
   );
   const product: IProduct = await res.json();
+  if (!product.id) return { notFound: true };
   return {
-    props: {
-      product,
-    },
+    props: { product },
     revalidate: 10,
   };
 };
