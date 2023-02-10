@@ -1,14 +1,23 @@
 import { comments } from "@/mocks/comments";
 import { NextApiRequest, NextApiResponse } from "next";
 
-type Comments = {
+type Comment = {
   id: number;
   text: string;
 };
 
 export default function handler(
-  _req: NextApiRequest,
-  res: NextApiResponse<Comments[]>
+  req: NextApiRequest,
+  res: NextApiResponse<Comment[] | Comment>
 ) {
-  res.status(200).json(comments);
+  if (req.method === "GET") {
+    res.status(200).json(comments);
+  } else if (req.method === "POST") {
+    const newComment: Comment = {
+      id: Date.now(),
+      text: req.body.text,
+    };
+    comments.push(newComment);
+    res.status(201).json(newComment);
+  }
 }
