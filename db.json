@@ -1,4 +1,27 @@
 {
+  "events": [
+    {
+      "id": 1,
+      "title": "Event 1",
+      "description": "lorem ipsum dolor sit, event one",
+      "category": "sports",
+      "date": "April 1, 2019"
+    },
+    {
+      "id": 2,
+      "title": "Event 2",
+      "description": "lorem ipsum dolor sit, event two",
+      "category": "food",
+      "date": "May 1, 2019"
+    },
+    {
+      "id": 3,
+      "title": "Event 3",
+      "description": "lorem ipsum dolor sit, event three",
+      "category": "technology",
+      "date": "December 1, 2019"
+    }
+  ],
   "dashboard": {
     "posts": 5,
     "likes": 100,
